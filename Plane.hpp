@@ -10,10 +10,14 @@ class Plane {
     int capacity;
     std::string type;
     int range;
+    int luggageCapacity;
 
 public:
-    Plane(const std::string& model, int capacity, const std::string& type, int range);
+    Plane(const std::string& model, int capacity, const std::string& type, int range, int luggageCapacity);
     void displayInfo() const;
+    int getCapacity() const;
+    bool canAddPassenger(int flightCapacity) const;
+    bool canAddLuggage(int luggage) const;
 };
 
 #endif // PLANE_HPP
