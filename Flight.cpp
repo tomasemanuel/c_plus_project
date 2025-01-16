@@ -1,6 +1,5 @@
 // --- Flight.cpp ---
 #include "Flight.hpp"
-#include "Plane.hpp"
 
 
 Flight::Flight(
@@ -8,19 +7,20 @@ Flight::Flight(
     const std::string& destination, 
     const Plane& plane, 
     const std::string& departureTime, 
-    const std::string& arrivalTime,
+    const std::string& arrivalTime, 
     const std::vector<std::shared_ptr<Passenger>>& passengers,
-    FlightStatus status,
-    const std::vector<std::string>& luggage
+    FlightStatus status, 
+    const std::unordered_map<std::string, int>& luggage
 ) : flightNumber(flightNumber), destination(destination), plane(plane),
     departureTime(departureTime), arrivalTime(arrivalTime), passengers(passengers),
-     status(status), luggage(luggage) {
-   
-}
+    status(status), luggage(luggage), luggageWeight(0) {}
+
+
 
 
 void Flight::addPassenger(const std::shared_ptr<Passenger>& passenger) {
-    if (plane.canAddPassenger(passengers.size())) {
+    std::cout << "\npassenger size : " << passengers.size() << std::endl;
+    if (plane.canAddPassenger(passengers.size() + 1)) {
         passengers.push_back(passenger);
     } else {
         throw std::runtime_error("Flight is full!");
@@ -55,8 +55,11 @@ std::string Flight::getFlightNumber() const {
 
 void Flight::setStatus(FlightStatus newStatus) {
     if (newStatus == FlightStatus::Landed) {
+        std::cout << "seeing passenger" << std::endl;
         for (const auto& passenger : passengers) {
-            passenger->archiveFlight();
+                        passenger->archiveFlight(shared_from_this());
+            std::cout << "Passenger " << passenger->getName() << " has landed at " << destination << std::endl;
+            passenger->listFlights();
             passenger->removeFlight(flightNumber);
         }
     }
@@ -66,6 +69,11 @@ void Flight::setStatus(FlightStatus newStatus) {
 FlightStatus Flight::getStatus() const {
     return status;
 }
+
+bool Flight::hasLanded() const {
+    return status == FlightStatus::Landed;
+}
+
 
 void Flight::removeLuggage(const std::string& passportNumber) {
     if (passengerLuggage.find(passportNumber) == passengerLuggage.end()) {
@@ -86,9 +94,22 @@ void Flight::displayInfo() const {
     std::cout << "Passengers: " << passengers.size() << "/" << plane.getCapacity() << "\n";
     std::cout << "Total Luggage Weight: " << luggageWeight << " kg\n";
 
+    std::cout << "Passenger Luggage:\n";
+    for (const auto& entry : passengerLuggage) {
+        std::cout << "Passport Number: " << entry.first << ", Luggage Weight: " << entry.second << " kg\n";
+    }
     std::cout << "Passenger Details:\n";
     for (const auto& passenger : passengers) {
         passenger->displayInfo();
-        std::cout << "Luggage: " << passengerLuggage.at(passenger->getPassportNumber()) << " kg\n";
-    }
+        if (passengerLuggage.find(passenger->getPassportNumber()) == passengerLuggage.end()) {
+            std::cout << "Warning: No luggage found for passenger with passport number: "
+                    << passenger->getPassportNumber() << std::endl;
+            continue;
+        }
+        std::cout << "Luggage weight for passenger with passport number: "
+                << passenger->getPassportNumber() << " is: "
+                << passengerLuggage.at(passenger->getPassportNumber()) << " kg" << std::endl;
+
+     }
+     
 }

@@ -22,6 +22,7 @@ public:
     void addFlight(const std::shared_ptr<Flight>& flight);
     void removeFlight(const std::string& flightNumber);
     void archiveFlight(const std::shared_ptr<Flight>& flight);
+    
     void displayTravelHistory() const;
     void listFlights() const;
 

@@ -26,26 +26,30 @@ void Passenger::displayTravelHistory() const {
 }
 
 void Passenger::listFlights() const {
+    std::cout << "Flights:" << std::endl;
     for (const auto& flight : flights) {
-        flight.second->displayInfo();
+        std::cout << "Flight Number: " << flight.first << std::endl;
     }
 }
 
 
 
 void Passenger::addFlight(const std::shared_ptr<Flight>& flight) {
-    flights[flight->getFlightNumber()] = flight;
-    flight->addPassenger(std::make_shared<Passenger>(*this));
-    flight->addLuggage(LuggageWeight, passportNumber);
+    flights[flight->getFlightNumber()] = flight; 
+    std::cout << "Flight added successfully!" << std::endl;
 }
 
 void Passenger::removeFlight(const std::string& flightNumber) {
-    if (flights.find(flightNumber) == flights.end()) {
+    auto it = flights.find(flightNumber);
+    if (it != flights.end()) {
+        flights.erase(it);
+        std::cout << "Flight removed successfully!" << std::endl;
+    } else {
         throw std::runtime_error("Flight not found!");
     }
-    flights[flightNumber]->removeLuggage(passportNumber);
-    flights.erase(flightNumber);
 }
+
+
 
 
 
