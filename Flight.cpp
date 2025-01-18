@@ -19,7 +19,6 @@ Flight::Flight(
 
 
 void Flight::addPassenger(const std::shared_ptr<Passenger>& passenger) {
-    std::cout << "\npassenger size : " << passengers.size() << std::endl;
     if (plane.canAddPassenger(passengers.size() + 1)) {
         passengers.push_back(passenger);
     } else {
